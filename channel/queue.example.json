@@ -1,0 +1,9 @@
+{
+  "_comment": "Очередь для scripts/pipeline/run_queue.py. Скопируйте в channel/queue.json. items: clip_id -> путь в публичной папке Яндекс.Диска (начинается с /) или локальный файл.",
+  "yadisk_public_key": "https://disk.yandex.ru/d/XXXXXXXX",
+  "format": "short",
+  "items": {
+    "podcast12": "/Подкасты/Выпуск 12.mp4",
+    "stream03": "input/stream03.mp4"
+  }
+}

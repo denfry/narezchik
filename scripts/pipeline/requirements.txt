@@ -1,0 +1,27 @@
+# Зависимости Shorts-пайплайна (scripts/shorts/*.py + .claude/skills/*).
+# ffmpeg/ffprobe — НЕ python-пакет, ставится отдельно (см. setup.md), должен быть в PATH.
+#
+# Версии закреплены по тому, что реально проверено на этой машине (см. setup.md) —
+# не строгий потолок, более новые минорные версии обычно совместимы.
+
+faster-whisper>=1.0.3      # транскрипция с word-level timestamps; тянет ctranslate2 сама
+jsonschema>=4.20           # полная валидация edit-plans/*.json против schemas/edit-plan.schema.json
+                            # (необязательно: validate_edit_plan.py при отсутствии пакета
+                            # откатывается на smoke-check обязательных полей)
+
+# Детект лица: autoframe.py (кроп по активному говорящему) и make_cover.py (выбор кадра
+# и кроп обложки по лицу). Оба падают с ModuleNotFoundError без этого пакета — проверено
+# 07.09.2026, в requirements его не было, хотя скрипты на него опираются с самого начала.
+# Модель face_landmarker.task (3.6 МБ) в пакет не входит и качается отдельно в
+# scripts/shorts/models/ — autoframe.py печатает готовую команду curl, если её нет.
+mediapipe>=1.0.1
+
+# GPU-ускорение транскрипции (опционально, но настоятельно рекомендуется при наличии
+# NVIDIA GPU — на порядок быстрее CPU). ctranslate2 (бэкенд faster-whisper) грузит cuBLAS/
+# cuDNN как обычные DLL, независимо от того, CPU или CUDA сборка torch стоит в окружении —
+# эти пакеты просто кладут нужные .dll в site-packages, ставить отдельно CUDA Toolkit не
+# нужно. scripts/shorts/transcribe.py сам находит и подключает их (см. _add_cuda_dll_dirs
+# в transcribe.py); без этих пакетов transcribe.py --device auto просто falls back на CPU.
+nvidia-cublas-cu12; sys_platform == "win32" or sys_platform == "linux"
+nvidia-cudnn-cu12; sys_platform == "win32" or sys_platform == "linux"
+nvidia-cuda-nvrtc-cu12; sys_platform == "win32" or sys_platform == "linux"

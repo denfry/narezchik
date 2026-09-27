@@ -1,0 +1,15 @@
+{
+  "_comment": "Бренд канала. Заполняется командой /setup-channel или руками. Поля, которых нет, берутся по умолчанию (scripts/pipeline/brand.py).",
+  "channel_name": "Мой канал",
+  "monogram": "",
+  "accent_color": "#E11111",
+  "highlight_color": "#FFD944",
+  "text_color": "#FFFFFF",
+  "cta_title": "ПОДПИШИСЬ",
+  "cta_sub": "ССЫЛКА В ОПИСАНИИ",
+  "tail_title": "СМОТРИ ДАЛЬШЕ",
+  "speaker_names": ["СПИКЕР", "ГОСТЬ"],
+  "cover_chevron": true,
+  "font_file": "Montserrat-ExtraBold.ttf",
+  "font_name": "Montserrat ExtraBold"
+}

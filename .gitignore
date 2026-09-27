@@ -1,0 +1,53 @@
+# Рабочие данные — у каждого свои, в репозиторий шаблона не попадают
+input/*
+transcripts/*
+edit-plans/*
+ideas/*
+community/*
+temp/*
+output/*
+cta/*
+!input/.gitkeep
+!transcripts/.gitkeep
+!edit-plans/.gitkeep
+!ideas/.gitkeep
+!community/.gitkeep
+!temp/.gitkeep
+!output/.gitkeep
+!cta/README.md
+
+# Профиль канала — ваш. Хотите версионировать свой форк — удалите эти строки.
+channel/*
+!channel/*.example.json
+
+# Секреты: API-ключи, OAuth
+secrets/
+
+# Бинарные ассеты: генерируются установщиком или кладутся пользователем
+assets/music/*
+!assets/music/README.md
+assets/sfx/*
+assets/broll/*
+!assets/broll/README.md
+assets/gfx/*
+!assets/gfx/README.md
+assets/cta/
+assets/luts/*
+# Шрифт — исключение: 455 КБ, OFL, без него рендер выглядит иначе
+!assets/fonts/*.ttf
+
+# Модель лиц — качается установщиком
+scripts/pipeline/models/
+
+# Python / инструменты
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.claude/cache/
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db

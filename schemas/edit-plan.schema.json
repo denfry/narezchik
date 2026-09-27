@@ -1,0 +1,868 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://narezchik.local/schemas/edit-plan.schema.json",
+  "title": "Shorts Edit Plan",
+  "description": "Единый machine-readable формат, через который все skills пайплайна shorts обмениваются решениями. Один файл в edit-plans/<clip_id>.json описывает один готовый (или ещё дорабатываемый) шортс. Стадии пайплайна ДОПОЛНЯЮТ файл по мере прохождения — ранние поля не переписываются, только читаются.",
+  "type": "object",
+  "required": [
+    "project",
+    "source",
+    "clip",
+    "speech_edits",
+    "subtitle_events",
+    "render_settings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "description": "Метаданные плана — кто/когда/на какой стадии.",
+      "required": [
+        "clip_id",
+        "created_at",
+        "stage"
+      ],
+      "properties": {
+        "clip_id": {
+          "type": "string",
+          "description": "Уникальный слаг, совпадает с именем файла без расширения, напр. 'interview_short03'"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "ingested",
+            "moment_selected",
+            "script_edited",
+            "retention_passed",
+            "visual_planned",
+            "subtitles_planned",
+            "broll_planned",
+            "cta_planned",
+            "audio_planned",
+            "rendered",
+            "qc_passed",
+            "final"
+          ],
+          "description": "Последняя завершённая стадия orchestrator-пайплайна — по ней ffmpeg-editor и qc понимают, что план уже готов к их шагу."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Свободные заметки редактора/агента между стадиями."
+        },
+        "related_long": {
+          "type": "string",
+          "description": "clip_id лонга, на который шортс ведёт через «Связанное видео» в Studio (packager, publish_sheet.py)."
+        },
+        "youtube_metadata": {
+          "type": "object",
+          "description": "Упаковка ролика — заполняет агент packager.",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "alternate_titles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "hashtags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chapters": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pinned_comment": {
+              "type": "string"
+            },
+            "cover_prompt": {
+              "type": "string"
+            },
+            "cover_text": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "Исходное видео — заполняется video-ingest. Никогда не редактируется руками после ingest.",
+      "required": [
+        "path",
+        "duration_sec",
+        "fps",
+        "width",
+        "height",
+        "video_codec",
+        "audio_codec"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Путь к файлу в input/, относительный от корня репозитория."
+        },
+        "duration_sec": {
+          "type": "number"
+        },
+        "fps": {
+          "type": "number"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "orientation": {
+          "type": "string",
+          "enum": [
+            "landscape",
+            "portrait",
+            "square"
+          ]
+        },
+        "video_codec": {
+          "type": "string"
+        },
+        "audio_codec": {
+          "type": "string"
+        },
+        "audio_channels": {
+          "type": "integer"
+        },
+        "audio_tracks": {
+          "type": "integer",
+          "description": "Кол-во аудио-дорожек в исходнике (для multi-mic записей)."
+        },
+        "loudness_lufs": {
+          "type": "number",
+          "description": "Integrated loudness исходника (ffmpeg ebur128), для справки при sound-design."
+        },
+        "transcript_path": {
+          "type": "string",
+          "description": "Путь к JSON-транскрипту в transcripts/, из которого взяты timestamps."
+        }
+      }
+    },
+    "clip": {
+      "type": "object",
+      "description": "Что за момент выбран — заполняется viral-moment-finder, читается всеми последующими стадиями.",
+      "required": [
+        "source_start_sec",
+        "source_end_sec",
+        "hook",
+        "core_idea",
+        "payoff",
+        "suggested_title"
+      ],
+      "properties": {
+        "source_start_sec": {
+          "type": "number"
+        },
+        "source_end_sec": {
+          "type": "number"
+        },
+        "hook": {
+          "type": "string"
+        },
+        "core_idea": {
+          "type": "string"
+        },
+        "payoff": {
+          "type": "string"
+        },
+        "reason_to_watch": {
+          "type": "string"
+        },
+        "virality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "retention_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "clarity_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "context_dependency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "0 = полностью понятен без контекста исходного видео, 10 = требует контекста."
+        },
+        "suggested_title": {
+          "type": "string"
+        },
+        "alt_titles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "speech_edits": {
+      "type": "array",
+      "description": "EDL — последовательность отрезков РЕЧИ из исходника в финальном порядке (shorts-script-editor). ffmpeg-editor режет и склеивает ровно эти сегменты. Порядок в массиве = порядок в готовом ролике, может отличаться от хронологии исходника (перестановка разрешена, если не искажает смысл).",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source_start_sec",
+          "source_end_sec",
+          "role",
+          "transcript_text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Стабильный id сегмента, напр. 'seg01' — на него ссылаются visual/subtitle/audio events."
+          },
+          "source_start_sec": {
+            "type": "number"
+          },
+          "source_end_sec": {
+            "type": "number"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "hook",
+              "setup",
+              "development",
+              "payoff",
+              "bridge",
+              "cta",
+              "promise",
+              "backstory",
+              "chapter",
+              "story",
+              "objection",
+              "practice"
+            ],
+            "description": "Место сегмента в драматургии. Shorts: hook/setup/development/payoff/bridge. Лонг дополнительно: promise (обещание структуры), backstory, chapter, story, objection, practice. cta — врезка-приглашение из cta/ (короткая, 8-15 с)."
+          },
+          "transcript_text": {
+            "type": "string",
+            "description": "Точный текст, что говорится в сегменте (для проверки, что смысл не искажён при перестановке/склейке)."
+          },
+          "cut_reason": {
+            "type": "string",
+            "description": "Почему вырезаны края этого сегмента (пауза/слово-паразит/повтор/лишнее вводное)."
+          },
+          "crossfade_in_ms": {
+            "type": "integer",
+            "default": 0,
+            "description": "Мягкая склейка звука на стыке, если жёсткий jump cut режет слово."
+          },
+          "source_path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Файл, из которого берётся этот сегмент, если не основной исходник (например, cta/invite.mp4 — CTA-зазывалка со своим звуком). source_start/end тогда в координатах этого файла. Врезка так становится куском монтажа, а не картинкой поверх речи."
+          }
+        }
+      }
+    },
+    "visual_events": {
+      "type": "array",
+      "description": "Визуальный монтаж поверх speech_edits — visual-director. Времена в TARGET-таймлайне готового ролика (0 = начало финального видео), не в таймлайне исходника.",
+      "items": {
+        "type": "object",
+        "required": [
+          "start_sec",
+          "end_sec",
+          "type",
+          "purpose"
+        ],
+        "properties": {
+          "start_sec": {
+            "type": "number"
+          },
+          "end_sec": {
+            "type": "number"
+          },
+          "segment_ref": {
+            "type": "string",
+            "description": "id из speech_edits, к которому привязано событие."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "talking_head",
+              "punch_in",
+              "punch_out",
+              "reframe",
+              "jump_cut",
+              "broll",
+              "screenshot",
+              "image_insert",
+              "freeze_frame",
+              "text_emphasis",
+              "graphic",
+              "intentional_pause"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Какую функцию выполняет (удержание/curiosity/эмоция/ясность/payoff) — обязательное поле, см. философию монтажа в docs/playbook.md."
+          },
+          "crop": {
+            "type": "object",
+            "description": "Параметры crop 9:16 для talking_head/punch_in/punch_out/reframe.",
+            "properties": {
+              "crop_x": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Левый край crop-окна в пикселях исходника; null = центр кадра."
+              },
+              "zoom": {
+                "type": "number",
+                "default": 1.0,
+                "description": ">1.0 — punch-in."
+              },
+              "eye_y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Высота линии глаз говорящего в кадре, доля сверху. Пишет autoframe.py. При наезде окно zoompan смещается так, чтобы глаза остались на постоянной высоте кадра, иначе смена крупности внутри реплики читается как скачок."
+              },
+              "ease_ms": {
+                "type": "integer",
+                "description": "Длительность плавного наезда до zoom, мс (250–400 для punch-in; равна длине куска для микро-зума)."
+              }
+            }
+          },
+          "asset_ref": {
+            "type": "string",
+            "description": "id из assets[] для broll/screenshot/image_insert."
+          },
+          "insert_mode": {
+            "type": "string",
+            "enum": [
+              "fullscreen",
+              "corner",
+              "plate"
+            ],
+            "default": "fullscreen",
+            "description": "Как показывать врезку: на весь кадр, пином в углу или маленькой брендовой плашкой поверх кадра (plate — PNG с альфой от scripts/pipeline/make_endplate.py, 40% ширины кадра)."
+          },
+          "insert_corner": {
+            "type": "string",
+            "enum": [
+              "top_right",
+              "top_left",
+              "bottom_right",
+              "bottom_left"
+            ],
+            "description": "В каком углу стоит врезка при insert_mode=corner или plate. По умолчанию top_right у вертикали и top_left у горизонтали: в 16:9 говорящий сидит правее центра, и правый верх закрывает ему лицо."
+          },
+          "insert_purpose": {
+            "type": "string",
+            "enum": [
+              "editorial",
+              "cta"
+            ],
+            "default": "editorial",
+            "description": "editorial — врезка работает на смысл ролика; cta — партнёрская врезка из cta/. Отдельное поле от purpose: там лежит текстовое обоснование события, оно обязательно для всех типов."
+          }
+        }
+      }
+    },
+    "subtitle_events": {
+      "type": "array",
+      "description": "Русские субтитры — subtitle-director. Слова со своими таймкодами группируются в короткие reading chunks.",
+      "items": {
+        "type": "object",
+        "required": [
+          "start_sec",
+          "end_sec",
+          "text",
+          "style"
+        ],
+        "properties": {
+          "start_sec": {
+            "type": "number"
+          },
+          "end_sec": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string",
+            "description": "Текст чанка как он появится на экране, может включать \\N для ручного переноса строки."
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "caption",
+              "hook_headline",
+              "speaker_label",
+              "emphasis_callout"
+            ]
+          },
+          "emphasized_words": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Слова внутри text, которые нужно выделить цветом/жирностью — по смысловой значимости, не механически."
+          },
+          "segment_ref": {
+            "type": "string"
+          },
+          "words": {
+            "type": "array",
+            "description": "Пословные тайминги для караоке-подсветки. Берутся из transcripts/<clip_id>.json (segments[].words[]) и пересчитываются в время готового ролика. Если массив отсутствует, субтитр рисуется одним блоком по text/start_sec/end_sec.",
+            "items": {
+              "type": "object",
+              "required": [
+                "word",
+                "start_sec",
+                "end_sec"
+              ],
+              "properties": {
+                "word": {
+                  "type": "string"
+                },
+                "start_sec": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end_sec": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "emphasis": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          },
+          "align": {
+            "type": "string",
+            "enum": [
+              "top_left",
+              "top_center",
+              "top_right"
+            ],
+            "description": "Только для hook_headline: угол кадра, где фон, — плашка-тезис не ложится на голову говорящего. Без поля — позиция стиля Hook (сверху по центру)."
+          }
+        }
+      }
+    },
+    "audio_events": {
+      "type": "array",
+      "description": "sound-designer. Пустой массив допустим (тишина между эффектами — нормальное состояние, не 'недоделанность').",
+      "items": {
+        "type": "object",
+        "required": [
+          "start_sec",
+          "end_sec",
+          "type"
+        ],
+        "properties": {
+          "start_sec": {
+            "type": "number"
+          },
+          "end_sec": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "music_bed",
+              "music_duck",
+              "sfx",
+              "voice_eq",
+              "voice_compress",
+              "voice_normalize",
+              "silence_trim",
+              "bleep"
+            ]
+          },
+          "asset_ref": {
+            "type": "string"
+          },
+          "gain_db": {
+            "type": "number"
+          },
+          "windows": {
+            "type": "array",
+            "description": "music_bed: окна звучания подложки по шкале готового ролика — [start, end] или [start, end, level], level — множитель громкости окна (по умолчанию 1; больше единицы — на заставке без голоса). Вне окон музыка молчит («музыка на швах»: хук, байт, CTA).",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 3,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "description": "Внешние медиа-файлы (broll/картинки/музыка), на которые ссылаются visual_events/audio_events по id.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "broll_video",
+              "image",
+              "music"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "description": "Путь в assets/broll|assets/music, относительный от корня репозитория. Может отсутствовать, если asset ещё не найден/не сгенерирован — тогда обязателен search_query."
+          },
+          "search_query": {
+            "type": "string",
+            "description": "Поисковый запрос от broll-researcher, если asset ещё нужно найти вручную."
+          },
+          "license_note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "render_settings": {
+      "type": "object",
+      "description": "ffmpeg-editor читает это и больше ничего не решает сам.",
+      "required": [
+        "width",
+        "height",
+        "fps",
+        "video_codec",
+        "audio_codec"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "default": 1080
+        },
+        "height": {
+          "type": "integer",
+          "default": 1920
+        },
+        "fps": {
+          "type": "number",
+          "default": 30
+        },
+        "cover_frame": {
+          "type": "object",
+          "description": "Обложка, вклеиваемая первым кадром ролика. YouTube Studio не даёт выбрать произвольный кадр как превью Shorts — свободный выбор есть только в мобильном приложении, поэтому обложка держится 2-3 секунды в самом начале.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "duration_sec": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 4,
+              "default": 2.5
+            },
+            "image_path": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Путь к готовому PNG. Заполняется make_cover.py при автосборке; допускает и вручную подготовленный файл."
+            },
+            "hook_text": {
+              "type": "string",
+              "description": "Заголовок обложки. Это НЕ срез clip.hook: нужна короткая самостоятельная формулировка, лучше вопрос или число (см. правила обложек в docs/playbook.md)."
+            },
+            "accent_color": {
+              "type": "string",
+              "default": "#E11111"
+            }
+          }
+        },
+        "tail_card": {
+          "type": "object",
+          "description": "Полноэкранная CTA-плашка в конце ролика. Удлиняет ролик, а не накладывается: ролик заканчивается на панчлайне, и оверлей закрыл бы то, ради чего зритель досматривал. Заполняет cta-director.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "duration_sec": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 2.5
+            },
+            "image_path": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Вертикальная картинка, обычно из cta/ (см. cta/README.md)."
+            }
+          }
+        },
+        "video_codec": {
+          "type": "string",
+          "default": "libx264"
+        },
+        "audio_codec": {
+          "type": "string",
+          "default": "aac"
+        },
+        "crf": {
+          "type": "integer",
+          "default": 16
+        },
+        "preset": {
+          "type": "string",
+          "default": "slow"
+        },
+        "audio_bitrate": {
+          "type": "string",
+          "default": "192k"
+        },
+        "target_lufs": {
+          "type": "number",
+          "default": -14,
+          "description": "Целевая integrated loudness для платформ Shorts/Reels/TikTok."
+        },
+        "use_gpu_encode": {
+          "type": "boolean",
+          "default": false,
+          "description": "h264_nvenc вместо libx264, если доступен и качество не критично важнее скорости."
+        },
+        "subtitle_mode": {
+          "type": "string",
+          "enum": [
+            "word",
+            "chunk",
+            "none"
+          ],
+          "description": "Как прожигаются субтитры. По умолчанию выводится из формата: 'word' (пословно, крупно) для вертикали, 'chunk' (фразой в нижней трети) для горизонтального лонга. Задавать явно только чтобы переопределить этот дефолт."
+        },
+        "inherit_source_resolution": {
+          "type": "boolean",
+          "default": false,
+          "description": "Взять разрешение выхода у исходника (лонг из 4K отдаётся в 3840×2160, вертикаль — по высоте исходника). YouTube на 1440p+ использует VP9 даже для роликов без просмотров; 1080p получает AVC с заметно худшей картинкой."
+        },
+        "color_grade": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "cinematic_warm",
+            "cinematic_cool",
+            "punchy",
+            "mono_red",
+            "none",
+            null
+          ],
+          "default": null,
+          "description": "Пресет цветокора render_short.COLOR_GRADES — часть уникализации ролика относительно исходника, а не эффект ради эффекта."
+        },
+        "min_output_height": {
+          "type": "integer",
+          "default": 1440,
+          "description": "Нижняя планка высоты выхода при inherit_source_resolution: 1080p-исходник апскейлится до 1440p, чтобы YouTube кодировал VP9."
+        },
+        "lut": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "3D LUT для цветокора: имя файла из assets/luts (teal_orange, warm_film, cool_steel, bleach, noir_red, clean_punch — генерируются make_luts.py) или путь к .cube. Применяется после color_grade, до зерна и субтитров."
+        },
+        "lut_strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6,
+          "description": "Доля LUT в смеси с оригиналом: 0.3-0.5 — деликатно, 0.6-0.8 — явный грейд."
+        },
+        "film_grain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0,
+          "description": "Плёночное зерно по яркости (noise c0s = grain*14). 0.2-0.35 достаточно для 4K говорящей головы."
+        },
+        "subtitle_scrim": {
+          "description": "Затемнение нижней части кадра под субтитрами: число 0..1 (сила) либо объект. Нужно на светлом фоне, где белый текст с обводкой читается на пределе. Пусто — фильтра нет.",
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "object",
+              "properties": {
+                "strength": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "height_frac": {
+                  "type": "number",
+                  "minimum": 0.05,
+                  "maximum": 0.6
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "qc": {
+      "type": "object",
+      "description": "Результат shorts-qc — и деterministic (scripts/pipeline/qc_video.py), и editorial (LLM-скор).",
+      "properties": {
+        "technical": {
+          "type": "object",
+          "description": "Вывод scripts/pipeline/qc_video.py как есть.",
+          "properties": {
+            "resolution_ok": {
+              "type": "boolean"
+            },
+            "fps_ok": {
+              "type": "boolean"
+            },
+            "has_black_frames": {
+              "type": "boolean"
+            },
+            "has_unexpected_silence": {
+              "type": "boolean"
+            },
+            "loudness_lufs": {
+              "type": "number"
+            },
+            "duration_sec": {
+              "type": "number"
+            }
+          }
+        },
+        "editorial": {
+          "type": "object",
+          "properties": {
+            "hook": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "retention": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "clarity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "pacing": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "visuals": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "subtitles": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "audio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "payoff": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "iteration": {
+              "type": "integer",
+              "description": "Номер попытки QC (лимит итераций — см. shorts-qc SKILL.md)."
+            },
+            "verdict": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "needs_fix",
+                "failed_max_iterations"
+              ]
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "output_path": {
+      "type": "string",
+      "description": "Путь к финальному .mp4 в output/, заполняется ffmpeg-editor после рендера."
+    }
+  }
+}

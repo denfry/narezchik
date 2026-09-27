@@ -1,0 +1,18 @@
+{
+  "model": "sonnet",
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/pipeline/*)",
+      "Bash(python scripts/channel/*)",
+      "Bash(python scripts/community/comments.py fetch*)",
+      "Bash(python scripts/publish/publish_sheet.py*)",
+      "Bash(python install.py --check)",
+      "Bash(ffprobe *)",
+      "Read(./edit-plans/**)",
+      "Read(./transcripts/**)",
+      "Read(./channel/**)",
+      "Read(./temp/**)",
+      "Read(./docs/**)"
+    ]
+  }
+}

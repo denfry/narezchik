@@ -1,0 +1,84 @@
+{
+  "project": {
+    "clip_id": "podcast12_short01",
+    "created_at": "2026-10-01T12:00:00",
+    "updated_at": "2026-10-01T14:30:00",
+    "stage": "audio_planned",
+    "notes": "Пример плана Shorts после монтажёра. Хук переставлен в начало (seg02 исходника раньше seg01). CTA: одно касание — плашка в конце, провала внимания нет.",
+    "related_long": "podcast12_long01"
+  },
+  "source": {
+    "path": "input/podcast12.mp4",
+    "duration_sec": 5400.0,
+    "fps": 25,
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "audio_channels": 2,
+    "audio_tracks": 1,
+    "loudness_lufs": -18.4,
+    "transcript_path": "transcripts/podcast12.json"
+  },
+  "clip": {
+    "source_start_sec": 1520.0,
+    "source_end_sec": 1561.0,
+    "hook": "Деньги не делают тебя счастливым — они делают тебя собой, только громче.",
+    "core_idea": "Деньги усиливают характер, а не меняют его.",
+    "payoff": "Поэтому сначала работаешь над собой, потом над доходом.",
+    "reason_to_watch": "Контринтуитивный тезис в первой фразе и короткий пример из жизни.",
+    "virality_score": 8,
+    "retention_score": 7,
+    "clarity_score": 9,
+    "context_dependency": 2,
+    "suggested_title": "Деньги делают тебя громче | Имя Спикера",
+    "alt_titles": ["Почему богатые не меняются?"]
+  },
+  "speech_edits": [
+    {"id": "seg01", "source_start_sec": 1541.2, "source_end_sec": 1546.8, "role": "hook",
+     "transcript_text": "Деньги не делают тебя счастливым — они делают тебя собой, только громче.",
+     "cut_reason": "самая сильная фраза фрагмента — вынесена в начало"},
+    {"id": "seg02", "source_start_sec": 1520.4, "source_end_sec": 1533.0, "role": "setup",
+     "transcript_text": "Смотри, у меня был знакомый, он всю жизнь говорил: вот будут деньги — стану добрее.",
+     "cut_reason": "контекст для хука, срезано вступление «ну вот смотри»"},
+    {"id": "seg03", "source_start_sec": 1533.6, "source_end_sec": 1541.0, "role": "development",
+     "transcript_text": "Появились деньги. И он стал тем же человеком, только теперь это всем видно.",
+     "cut_reason": "auto_cut: пауза 0.6 с перед фразой вырезана"},
+    {"id": "seg04", "source_start_sec": 1547.2, "source_end_sec": 1556.4, "role": "payoff",
+     "transcript_text": "Поэтому сначала работаешь над собой, потом над доходом. Не наоборот.",
+     "cut_reason": "вывод, конец на ударной фразе", "crossfade_in_ms": 100}
+  ],
+  "visual_events": [
+    {"start_sec": 0.0, "end_sec": 5.6, "type": "punch_in", "segment_ref": "seg01",
+     "crop": {"crop_x": 656, "zoom": 1.12, "ease_ms": 300},
+     "description": "наезд на хуке", "purpose": "усиливает контринтуитивный тезис в первые секунды"}
+  ],
+  "subtitle_events": [
+    {"start_sec": 0.0, "end_sec": 2.2, "text": "ДЕНЬГИ ДЕЛАЮТ ТЕБЯ ГРОМЧЕ", "style": "hook_headline"},
+    {"start_sec": 0.0, "end_sec": 5.6, "style": "caption",
+     "text": "Деньги не делают тебя счастливым — они делают тебя собой, только громче.",
+     "words": [
+       {"word": "Деньги", "start_sec": 0.08, "end_sec": 0.5, "emphasis": true},
+       {"word": "не", "start_sec": 0.5, "end_sec": 0.62}
+     ]}
+  ],
+  "audio_events": [
+    {"type": "music_bed", "asset_ref": "music01", "start_sec": 0.0, "end_sec": 34.2, "gain_db": -20},
+    {"type": "music_duck", "start_sec": 0.0, "end_sec": 34.2}
+  ],
+  "assets": [
+    {"id": "music01", "kind": "music", "path": "assets/music/tense_pulse_01.mp3",
+     "source": "synth_assets.py", "license": "own"}
+  ],
+  "render_settings": {
+    "width": 1080, "height": 1920, "fps": 25,
+    "video_codec": "libx264", "audio_codec": "aac", "crf": 16, "preset": "slow",
+    "audio_bitrate": "192k", "target_lufs": -14,
+    "cover_frame": {"enabled": false},
+    "tail_card": {"enabled": false},
+    "subtitle_mode": "word",
+    "lut": "warm_film", "lut_strength": 0.5, "film_grain": 0.2
+  },
+  "output_path": "output/podcast12_short01.mp4"
+}

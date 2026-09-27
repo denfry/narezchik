@@ -1,0 +1,21 @@
+{
+  "_comment": "Настройки воркфлоу. Копия в channel/settings.json (создаёт install.py, заполняет /setup-channel). budget: eco — подписка Claude Pro ($20): один агент на стадию, без b-roll, 1 круг критики; standard — Max-подписка; max — агент на каждый ролик параллельно.",
+  "budget": "eco",
+  "language": "ru",
+  "shorts_per_source": 5,
+  "qc_iterations": 1,
+  "utc_offset": 3,
+  "publish_slots": {
+    "shorts_time": "12:00",
+    "long_weekday": 5,
+    "long_time": "18:00"
+  },
+  "funnel_url": "",
+  "bait": {
+    "shorts": {"enabled": true, "format": "open_loop", "max_sec": 3},
+    "long": {"enabled": true, "midroll": true, "first_third": false, "max_sec": 15,
+             "format": "bridge_plate", "qr_plate": true}
+  },
+  "whisper_model": "small",
+  "remote_host": ""
+}
