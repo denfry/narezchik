@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Нарезчик — гайд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #17171a;
+    --ink-2: #4a4a52;
+    --ink-3: #85858f;
+    --rule: #dcdcd6;
+    --paper: #ffffff;
+    --tint: #f3f2ee;
+    --accent: #b8361e;
+  }
+  @page {
+    size: A4;
+    margin: 18mm 17mm 18mm 17mm;
+    @bottom-left { content: "Нарезчик · гайд для нарезчиков · октябрь 2026"; font: 7.5pt "Golos Text"; color: #85858f; }
+    @bottom-right { content: counter(page) " / " counter(pages); font: 7.5pt "Golos Text"; color: #85858f; }
+  }
+  @page :first { @bottom-left { content: none; } }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0; color: var(--ink); background: var(--paper);
+    font: 9.6pt/1.5 "Golos Text", sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    hyphens: auto;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.2; margin: 0; }
+  p { margin: 0 0 7pt; }
+  code, .mono { font-family: "JetBrains Mono", monospace; font-size: 8.4pt; }
+  code { background: var(--tint); padding: 0.5pt 3pt; border-radius: 2pt; }
+
+  /* cover */
+  .cover { padding-top: 6mm; margin-bottom: 9mm; }
+  .eyebrow { font-size: 8pt; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 5mm; }
+  .cover h1 { font-size: 30pt; font-weight: 700; letter-spacing: -.01em; margin-bottom: 4mm; }
+  .lede { font-size: 11.5pt; line-height: 1.45; color: var(--ink-2); max-width: 150mm; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1.2pt solid var(--ink); margin-top: 8mm; }
+  .facts div { padding: 3.5mm 4mm 0 0; }
+  .facts b { display: block; font-size: 17pt; font-weight: 600; letter-spacing: -.01em; }
+  .facts span { font-size: 8.2pt; color: var(--ink-2); line-height: 1.35; display: block; }
+
+  section { margin-bottom: 8mm; }
+  .sec-head { display: flex; align-items: baseline; gap: 4mm; border-top: 0.6pt solid var(--rule); padding-top: 3mm; margin-bottom: 3.5mm; }
+  .sec-head .n { font: 500 8.5pt "JetBrains Mono", monospace; color: var(--accent); }
+  .sec-head h2 { font-size: 14pt; }
+  h3 { font-size: 10.2pt; margin: 4.5mm 0 2mm; }
+  .note { color: var(--ink-2); font-size: 8.6pt; }
+  .page-break { break-before: page; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1mm 0 3mm; font-size: 8.8pt; break-inside: avoid; }
+  th { text-align: left; font-weight: 600; font-size: 7.8pt; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; border-bottom: 0.9pt solid var(--ink); padding: 0 3mm 1.5mm 0; }
+  td { border-bottom: 0.5pt solid var(--rule); padding: 1.6mm 3mm 1.6mm 0; vertical-align: top; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { border-top: 0.9pt solid var(--ink); border-bottom: none; font-weight: 600; }
+  .free { color: var(--ink-3); }
+  .paid { color: var(--accent); font-weight: 600; }
+
+  /* pipeline */
+  .flow { counter-reset: step; margin: 0; padding: 0; list-style: none; }
+  .flow li { display: grid; grid-template-columns: 7mm 34mm 1fr 18mm; gap: 2mm; padding: 1.7mm 0; border-bottom: 0.5pt solid var(--rule); align-items: baseline; break-inside: avoid; }
+  .flow li::before { counter-increment: step; content: counter(step, decimal-leading-zero); font: 500 8pt "JetBrains Mono", monospace; color: var(--ink-3); }
+  .flow .who { font-weight: 600; }
+  .flow .what { color: var(--ink-2); }
+  .flow .tag { font: 500 7.4pt "JetBrains Mono", monospace; text-align: right; color: var(--ink-3); }
+  .flow .tag.ai { color: var(--accent); }
+
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { position: relative; padding: 0 0 2.6mm 9mm; break-inside: avoid; }
+  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: -0.3pt; width: 5.5mm; height: 5.5mm; border: 0.8pt solid var(--ink); border-radius: 50%; font: 600 7.8pt/5.3mm "Golos Text"; text-align: center; }
+  .steps b { font-weight: 600; }
+  pre { margin: 1.5mm 0 0; background: var(--tint); padding: 2.2mm 3mm; border-radius: 2pt; font: 8.2pt/1.5 "JetBrains Mono", monospace; white-space: pre-wrap; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+  .callout { border-left: 2pt solid var(--accent); padding: 1mm 0 1mm 4mm; margin: 3mm 0 4mm; break-inside: avoid; }
+  .callout p:last-child { margin: 0; }
+  .formula { font: 500 10pt "JetBrains Mono", monospace; background: var(--tint); padding: 3mm 4mm; border-radius: 2pt; margin: 2mm 0 3mm; }
+  .formula small { display: block; font: 8pt "Golos Text"; color: var(--ink-2); margin-top: 1.2mm; }
+  ul.plain { margin: 0 0 3mm; padding-left: 4.5mm; }
+  ul.plain li { margin-bottom: 1.4mm; }
+  .src { font-size: 7.6pt; color: var(--ink-3); margin-top: 6mm; border-top: 0.5pt solid var(--rule); padding-top: 2mm; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">Гайд для нарезчиков</div>
+  <h1>Нарезчик: что внутри,<br>как запустить, сколько стоит</h1>
+  <p class="lede">Набор агентов для Claude Code, который из длинного видео (подкаст, интервью, стрим)
+  делает готовые Shorts и лонги 5–15 минут под стиль конкретного канала: находит моменты, собирает
+  речь, кропает на говорящего, ставит субтитры и звук, рендерит в 4K и пишет упаковку.
+  Человек подтверждает моменты и принимает результат.</p>
+  <div class="facts">
+    <div><b>≈ $2,5</b><span>за один Shorts по ценам API при пачке из 5 роликов с одного исходника</span></div>
+    <div><b>$20 / мес</b><span>минимальная подписка Claude Pro, на ней проект и рассчитан</span></div>
+    <div><b>$0</b><span>транскрипция, кроп, рендер, музыка — всё локально, бесплатными программами</span></div>
+  </div>
+</div>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>Связка: что за что отвечает</h2></div>
+  <p>Нейросеть принимает только редакторские решения: какой момент взять, где хук, что вырезать,
+  куда поставить акцент. Всё, что можно посчитать, делает обычный код — так дешевле и предсказуемее.</p>
+  <table>
+    <thead><tr><th style="width:27%">Компонент</th><th>Роль</th><th class="num" style="width:16%">Цена</th></tr></thead>
+    <tbody>
+      <tr><td><b>Claude Code</b><br><span class="note">Sonnet 5.5 — редакторы,<br>Haiku 5.5 — техник</span></td><td>Оркестрация. Девять агентов-ролей: скаут, сценарист, монтажёры Shorts и лонгов, техник, критик, упаковщик, аналитик канала, комьюнити-менеджер. Общаются через JSON-план монтажа.</td><td class="num paid">подписка или API</td></tr>
+      <tr><td><b>faster-whisper</b></td><td>Транскрипция с таймкодами каждого слова. Локально, на NVIDIA в разы быстрее реального времени, на CPU — примерно в реальном времени.</td><td class="num free">бесплатно</td></tr>
+      <tr><td><b>mediapipe</b></td><td>Поиск лица: автокроп 9:16 на говорящего, выбор кадра для обложки, проверка, что лицо в кадре.</td><td class="num free">бесплатно</td></tr>
+      <tr><td><b>ffmpeg</b></td><td>Весь видеомонтаж: нарезка, наезды, склейка, цветокор (7 LUT), субтитры, сведение звука в −14 LUFS. Один финальный энкод, H.264, мастер 4K.</td><td class="num free">бесплатно</td></tr>
+      <tr><td><b>YouTube Data API</b></td><td>Разбор канала (что заходит, стиль обложек), загрузка роликов по расписанию, комментарии.</td><td class="num free">бесплатно, квота</td></tr>
+      <tr><td><b>ACE-Step</b> <span class="note">(по желанию)</span></td><td>Локальная генерация музыки-подложки без прав третьих лиц. Нужна NVIDIA от 8 ГБ.</td><td class="num free">бесплатно</td></tr>
+      <tr><td><b>Свой сервер</b> <span class="note">(по желанию)</span></td><td>Транскрипция и рендер по SSH на VPS с Docker, если домашний ПК слабый или занят. GPU не нужен.</td><td class="num">аренда VPS</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="page-break">
+  <div class="sec-head"><span class="n">02</span><h2>Конвейер одного Shorts</h2></div>
+  <p>Команда <code>/shorts input/podcast.mp4 5</code> прогоняет видео через роли по очереди.
+  Состояние хранится в файле плана, поэтому работу можно прервать в любой момент и продолжить потом.</p>
+  <ol class="flow">
+    <li><span class="who">Техник</span><span class="what">Принимает файл, проверяет параметры, делает транскрипт.</span><span class="tag">код</span></li>
+    <li><span class="who">Скаут</span><span class="what">Читает транскрипт целиком, предлагает таблицу моментов. <b>Вы выбираете, какие брать.</b></span><span class="tag ai">модель</span></li>
+    <li><span class="who">Сценарист</span><span class="what">Черновик нарезки по паузам делает скрипт, модель ставит хук, режет воду и повторы.</span><span class="tag ai">модель</span></li>
+    <li><span class="who">Монтажёр</span><span class="what">Кроп на говорящего (скрипт), наезды, акценты в субтитрах, подложка, мост в лонг.</span><span class="tag ai">модель</span></li>
+    <li><span class="who">Техник</span><span class="what">Валидация плана, рендер строго по одному, технический контроль файла.</span><span class="tag">код</span></li>
+    <li><span class="who">Критик</span><span class="what">Независимо оценивает ролик по 8 параметрам, возвращает правку конкретной роли.</span><span class="tag ai">модель</span></li>
+    <li><span class="who">Упаковщик</span><span class="what">Заголовки, описание, теги, закреп, промпт обложки, расписание публикаций.</span><span class="tag ai">модель</span></li>
+  </ol>
+  <p class="note" style="margin-top:2mm">Лонг идёт тем же путём, но скаут предлагает структуру с главами, а монтирует отдельная роль:
+  карточки глав, фразовые субтитры, музыка только на стыках.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>Как запустить</h2></div>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">Что нужно</h3>
+      <table>
+        <tbody>
+          <tr><td style="width:32%">Система</td><td>Windows, macOS или Linux</td></tr>
+          <tr><td>Python</td><td>3.10–3.12 (на 3.13 может не встать mediapipe)</td></tr>
+          <tr><td>Память</td><td>4K-рендер лонга держит 6–9 ГБ RAM — комфортно от 16 ГБ</td></tr>
+          <tr><td>Видеокарта</td><td>не обязательна; NVIDIA ускоряет транскрипцию примерно в 10 раз</td></tr>
+          <tr><td>Диск</td><td>исходник подкаста в 4K — 10–40 ГБ</td></tr>
+          <tr><td>Аккаунты</td><td>Claude (Pro или выше), Google Cloud для YouTube API-ключа</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Шаги</h3>
+      <ol class="steps">
+        <li><b>Поставить Claude Code</b> — установщик на claude.com/claude-code, вход через подписку.</li>
+        <li><b>Скачать проект и запустить установщик.</b> Он сам поставит ffmpeg, whisper, mediapipe и покажет, чего не хватает.
+          <pre>install.cmd --auto      # Windows
+./install.sh --auto     # macOS / Linux</pre></li>
+        <li><b>Открыть папку в Claude Code</b> (<code>claude</code>) и один раз принять доверие папке.</li>
+        <li><b>Подключить канал:</b> <code>/setup-channel @канал</code>. Ключ YouTube API — бесплатно, 3–5 минут.</li>
+        <li><b>Положить видео в <code>input/</code></b> и дать команду:
+          <pre>/shorts input/podcast.mp4 5</pre></li>
+      </ol>
+    </div>
+  </div>
+  <p class="note">Готовые ролики появляются в <code>output/</code>. <code>/fix &lt;ролик&gt; &lt;что не так&gt;</code> — точечная правка,
+  <code>/pack</code> — упаковка и лист публикации. Проверить установку: <code>python install.py --check</code>.</p>
+</section>
+
+<section class="page-break">
+  <div class="sec-head"><span class="n">04</span><h2>Сколько стоит ролик</h2></div>
+  <p>Замер на живом прогоне: двухчасовой подкаст, 2 Shorts, все стадии. Цифры — в ценах API.
+  На подписке вы платите фиксированную сумму, а это расход лимита, но пропорции те же.</p>
+
+  <div class="two">
+    <div>
+      <table>
+        <thead><tr><th>Стадия</th><th class="num">На 2 ролика</th></tr></thead>
+        <tbody>
+          <tr><td>Приём исходника</td><td class="num">$0,07</td></tr>
+          <tr><td>Скаут <span class="note">(весь транскрипт)</span></td><td class="num">$0,78</td></tr>
+          <tr><td>Сценарист</td><td class="num">$0,78</td></tr>
+          <tr><td>Монтажёр <span class="note">(смотрит кадры)</span></td><td class="num">$2,41</td></tr>
+          <tr><td>Рендер и техконтроль</td><td class="num">$0,31</td></tr>
+          <tr><td>Критик</td><td class="num">$0,65</td></tr>
+          <tr><td>Упаковщик</td><td class="num">$0,59</td></tr>
+          <tr class="total"><td>Итого</td><td class="num">$5,59</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Из чего складывается</h3>
+      <p>Часть расходов не зависит от числа роликов: приём видео и скаут платятся один раз на исходник.
+      Остальное — на каждый ролик.</p>
+      <div class="formula">$0,07 + $0,39 × часы + $2,37 × N
+        <small>N — сколько Shorts берёте из одного исходника.<br>Круг правок после критика — ещё примерно +$0,8 на ролик.</small></div>
+    </div>
+  </div>
+
+  <h3>По хронометражу исходника</h3>
+  <table>
+    <thead><tr><th>Исходник</th><th class="num">1 Shorts</th><th class="num">3 Shorts</th><th class="num">5 Shorts</th><th class="num">10 Shorts</th></tr></thead>
+    <tbody>
+      <tr><td>Подкаст 1 час</td><td class="num">$2,83</td><td class="num">$7,57 · $2,52/шт</td><td class="num">$12,31 · $2,46/шт</td><td class="num">$24,16 · $2,42/шт</td></tr>
+      <tr><td>Подкаст 2 часа</td><td class="num">$3,22</td><td class="num">$7,96 · $2,65/шт</td><td class="num">$12,70 · $2,54/шт</td><td class="num">$24,55 · $2,46/шт</td></tr>
+      <tr><td>Стрим 4 часа</td><td class="num">$4,00</td><td class="num">$8,74 · $2,91/шт</td><td class="num">$13,48 · $2,70/шт</td><td class="num">$25,33 · $2,53/шт</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Вывод: выгоднее брать 5–10 роликов с одного длинного исходника, чем по одному с разных.
+  Лонг 5–15 минут отдельно не замерялся; по объёму работы сценариста и монтажёра ориентир — как 2–4 Shorts.
+  Проверьте на своём первом лонге командой <code>/usage</code>.</p>
+
+  <h3>Подписка или API</h3>
+  <table>
+    <thead><tr><th style="width:24%">Вариант</th><th class="num" style="width:14%">В месяц</th><th>Как работает</th></tr></thead>
+    <tbody>
+      <tr><td><b>Claude Pro</b></td><td class="num">$20</td><td>Лимит на окно около 5 часов плюс недельный. Хватает на регулярные пачки, но не на поток. Проект по умолчанию в экономном режиме именно под Pro.</td></tr>
+      <tr><td><b>Claude Max 5x</b></td><td class="num">$100</td><td>В 5 раз больше лимита Pro. Плюс $100 в месяц кредитов на API.</td></tr>
+      <tr><td><b>Claude Max 20x</b></td><td class="num">$200</td><td>В 20 раз больше лимита Pro. Плюс $200 в месяц кредитов на API.</td></tr>
+      <tr><td><b>API по факту</b></td><td class="num">≈ $2,5 / ролик</td><td>Без лимитов по окнам, платите за токены. Удобно, когда объём большой и неровный.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <p><b>Сколько роликов влезет в подписку.</b> Anthropic не публикует лимиты в токенах, и они меняются, поэтому
+    точную цифру никто не даст. Посчитайте сами за один вечер: сделайте пачку из 5 Shorts и посмотрите в <code>/usage</code>,
+    какую долю недельного лимита она съела. Если 20% — подписка тянет около 25 Shorts в неделю.</p>
+  </div>
+</section>
+
+<section class="page-break">
+  <div class="sec-head"><span class="n">05</span><h2>Потянет ли массовый нарезчик</h2></div>
+  <p>Всё, кроме Claude, бесплатно, поэтому вся экономика сводится к одной цене — стоимости ролика в токенах
+  и вашему времени на проверку.</p>
+
+  <table>
+    <thead><tr><th>Объём в месяц</th><th class="num">API, без правок</th><th class="num">API, круг правок на каждом</th><th>Что подойдёт</th></tr></thead>
+    <tbody>
+      <tr><td>30 Shorts <span class="note">(1 в день)</span></td><td class="num">≈ $75</td><td class="num">≈ $100</td><td>Pro, если уложитесь в лимит; иначе Max 5x</td></tr>
+      <tr><td>100 Shorts</td><td class="num">≈ $250</td><td class="num">≈ $335</td><td>Max 20x или API</td></tr>
+      <tr><td>300 Shorts <span class="note">(10 в день)</span></td><td class="num">≈ $750</td><td class="num">≈ $1 000</td><td>API; Max 20x + его кредиты как часть объёма</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Как прикинуть выгоду</h3>
+  <div class="formula">прибыль с ролика = ваша ставка − $2,5…3,4 − ваше время × цена часа
+    <small>Ваше время — это выбор моментов из таблицы скаута, просмотр готового ролика и правки словами.<br>Сам монтаж, субтитры и рендер — без вас.</small></div>
+
+  <div class="two">
+    <div>
+      <h3>Где упрётесь при потоке</h3>
+      <ul class="plain">
+        <li><b>Рендер — по одному.</b> Параллельно ролики на одной машине не рендерятся, иначе не хватит памяти. Для потока — второй ПК или VPS.</li>
+        <li><b>Квота YouTube API</b> — около 6 загрузок в день на проект. Больше — через Studio вручную или несколько проектов.</li>
+        <li><b>Непроверенный API-проект</b> грузит ролики только приватными. До аудита YouTube открывайте их вручную.</li>
+        <li><b>Окна лимита подписки.</b> Упёрлись посреди пачки — ничего не теряется, продолжаете после сброса с того же шага.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Как держать цену ниже</h3>
+      <ul class="plain">
+        <li>Брать 5–10 роликов с одного исходника: скаут платится один раз.</li>
+        <li>Отсеивать слабые моменты до монтажа, а не после.</li>
+        <li>Править конкретно: «хук длинный, начни с „Никогда“», а не «переделай».</li>
+        <li><code>/clear</code> между пачками: старый контекст оплачивается в каждом сообщении.</li>
+        <li>Отключить лишние MCP-серверы в Claude Code.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><b>Оплата из России.</b> Россия не входит в список стран, где Anthropic официально предоставляет сервис,
+    поэтому подписка и API оплачиваются зарубежной картой. Заложите это в расчёт: комиссии посредников
+    могут добавить к цене заметный процент.</p>
+  </div>
+
+  <p class="src">Цены подписок — claude.com/pricing и support.claude.com, октябрь 2026; региональные цены и налоги могут отличаться.
+  Стоимость ролика — замер из docs/budget.md в ценах API на момент замера. Все расчёты в таблицах выведены из этого замера.</p>
+</section>
+
+</body>
+</html>

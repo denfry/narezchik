@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Нарезчик — установка и лонги</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #17171a;
+    --ink-2: #4a4a52;
+    --ink-3: #85858f;
+    --rule: #dcdcd6;
+    --paper: #ffffff;
+    --tint: #f3f2ee;
+    --accent: #b8361e;
+  }
+  @page {
+    size: A4;
+    margin: 18mm 17mm 18mm 17mm;
+    @bottom-left { content: "Нарезчик · установка с нуля и лонги · октябрь 2026"; font: 7.5pt "Golos Text"; color: #85858f; }
+    @bottom-right { content: counter(page) " / " counter(pages); font: 7.5pt "Golos Text"; color: #85858f; }
+  }
+  @page :first { @bottom-left { content: none; } }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0; color: var(--ink); background: var(--paper);
+    font: 9.6pt/1.5 "Golos Text", sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    hyphens: auto;
+  }
+  h1, h2, h3 { font-weight: 600; line-height: 1.2; margin: 0; }
+  p { margin: 0 0 7pt; }
+  code, .mono { font-family: "JetBrains Mono", monospace; font-size: 8.4pt; }
+  code { background: var(--tint); padding: 0.5pt 3pt; border-radius: 2pt; }
+
+  .cover { padding-top: 6mm; margin-bottom: 9mm; }
+  .eyebrow { font-size: 8pt; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 5mm; }
+  .cover h1 { font-size: 30pt; font-weight: 700; letter-spacing: -.01em; margin-bottom: 4mm; }
+  .lede { font-size: 11.5pt; line-height: 1.45; color: var(--ink-2); max-width: 150mm; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1.2pt solid var(--ink); margin-top: 8mm; }
+  .facts div { padding: 3.5mm 4mm 0 0; }
+  .facts b { display: block; font-size: 17pt; font-weight: 600; letter-spacing: -.01em; }
+  .facts span { font-size: 8.2pt; color: var(--ink-2); line-height: 1.35; display: block; }
+
+  section { margin-bottom: 8mm; }
+  .sec-head { display: flex; align-items: baseline; gap: 4mm; border-top: 0.6pt solid var(--rule); padding-top: 3mm; margin-bottom: 3.5mm; }
+  .sec-head .n { font: 500 8.5pt "JetBrains Mono", monospace; color: var(--accent); }
+  .sec-head h2 { font-size: 14pt; }
+  h3 { font-size: 10.2pt; margin: 4.5mm 0 2mm; }
+  .note { color: var(--ink-2); font-size: 8.6pt; }
+  .page-break { break-before: page; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1mm 0 3mm; font-size: 8.8pt; break-inside: avoid; }
+  th { text-align: left; font-weight: 600; font-size: 7.8pt; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; border-bottom: 0.9pt solid var(--ink); padding: 0 3mm 1.5mm 0; }
+  td { border-bottom: 0.5pt solid var(--rule); padding: 1.6mm 3mm 1.6mm 0; vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  table.wrap td:first-child { white-space: normal; width: 38%; }
+
+  .flow { counter-reset: step; margin: 0; padding: 0; list-style: none; }
+  .flow li { display: grid; grid-template-columns: 7mm 34mm 1fr 18mm; gap: 2mm; padding: 1.7mm 0; border-bottom: 0.5pt solid var(--rule); align-items: baseline; break-inside: avoid; }
+  .flow li::before { counter-increment: step; content: counter(step, decimal-leading-zero); font: 500 8pt "JetBrains Mono", monospace; color: var(--ink-3); }
+  .flow .who { font-weight: 600; }
+  .flow .what { color: var(--ink-2); }
+  .flow .tag { font: 500 7.4pt "JetBrains Mono", monospace; text-align: right; color: var(--ink-3); }
+  .flow .tag.you { color: var(--accent); }
+
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { position: relative; padding: 0 0 3.2mm 9mm; break-inside: avoid; }
+  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: -0.3pt; width: 5.5mm; height: 5.5mm; border: 0.8pt solid var(--ink); border-radius: 50%; font: 600 7.8pt/5.3mm "Golos Text"; text-align: center; }
+  .steps b { font-weight: 600; }
+  .steps .sub { color: var(--ink-2); font-size: 8.8pt; display: block; margin-top: 1mm; }
+  pre { margin: 1.5mm 0 0; background: var(--tint); padding: 2.2mm 3mm; border-radius: 2pt; font: 8.2pt/1.5 "JetBrains Mono", monospace; white-space: pre-wrap; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+  .callout { border-left: 2pt solid var(--accent); padding: 1mm 0 1mm 4mm; margin: 3mm 0 4mm; break-inside: avoid; }
+  .callout p:last-child { margin: 0; }
+  ul.plain { margin: 0 0 3mm; padding-left: 4.5mm; }
+  ul.plain li { margin-bottom: 1.4mm; }
+  .say { font-style: normal; background: var(--tint); padding: 0.5pt 3pt; border-radius: 2pt; }
+  .src { font-size: 7.6pt; color: var(--ink-3); margin-top: 6mm; border-top: 0.5pt solid var(--rule); padding-top: 2mm; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="eyebrow">Гайд · для тех, кто ни разу не программировал</div>
+  <h1>Установка с нуля<br>и первый лонг</h1>
+  <p class="lede">Пошагово: как поставить Нарезчик на обычный Windows-компьютер, нарезать из подкаста
+  длинный ролик на 5–15 минут и залить его на YouTube. Писать код не нужно: вы копируете готовые
+  команды и дальше просто переписываетесь с Claude обычным текстом.</p>
+  <div class="facts">
+    <div><b>≈ 1 час</b><span>установка, один раз. Потом сразу работа</span></div>
+    <div><b>3 решения</b><span>от вас за ролик: структура, главы до рендера, приёмка</span></div>
+    <div><b>1–2 часа</b><span>рендер лонга. Идёт в фоне, компьютер остаётся свободен</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>Перед началом</h2></div>
+  <div class="two">
+    <div>
+      <h3>Что понадобится</h3>
+      <table>
+        <tr><td>Компьютер</td><td>Windows 10 или 11. Средний игровой ПК подходит, например RTX 4060 и 16 ГБ памяти</td></tr>
+        <tr><td>Видеокарта</td><td>не обязательна. С NVIDIA расшифровка речи идёт примерно в 10 раз быстрее</td></tr>
+        <tr><td>Место на диске</td><td>от 50 ГБ свободных: часовой подкаст в 4K весит 10–40 ГБ</td></tr>
+        <tr><td>Подписка</td><td>Claude Pro ($20 в месяц) или выше</td></tr>
+        <tr><td>YouTube</td><td>Google-аккаунт, к которому привязан канал</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Три слова, которые встретятся</h3>
+      <p><b>Терминал</b> — окно, в которое вставляют команды. Мы используем PowerShell: нажмите
+      <b>Пуск</b>, наберите <code>PowerShell</code>, нажмите Enter.</p>
+      <p><b>Вставить команду:</b> скопируйте её из гайда, кликните в окно терминала правой кнопкой мыши
+      (или нажмите Ctrl+V) и нажмите Enter.</p>
+      <p><b>Папка проекта</b> — папка <code>narezchik</code>, которую вы скачаете в шаге 4.
+      Почти всё происходит внутри неё.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <p>Если команда напечатала много текста и снова ждёт ввода, это нормально. Плохой знак — только
+    красный текст со словом <b>error</b>. Тогда смотрите таблицу в разделе 06.</p>
+  </div>
+</section>
+
+<section class="page-break">
+  <div class="sec-head"><span class="n">02</span><h2>Установка — один раз</h2></div>
+  <ol class="steps">
+    <li><b>Python 3.12</b> — язык, на котором написаны скрипты проекта. Откройте PowerShell и вставьте:
+      <pre>winget install -e --id Python.Python.3.12</pre>
+      <span class="sub">Через сайт тоже можно: на python.org/downloads выберите именно <b>3.12</b> (на 3.13 и новее
+      не встаёт одна из библиотек) и в первом окне установщика <b>обязательно поставьте галочку
+      «Add python.exe to PATH»</b>.</span></li>
+    <li><b>Git</b> — нужен, чтобы скачать проект одной командой, и с ним Claude удобнее выполнять команды.
+      <pre>winget install -e --id Git.Git</pre></li>
+    <li><b>Claude Code</b> — сам Claude, работающий у вас на компьютере. Вставьте:
+      <pre>irm https://claude.ai/install.ps1 | iex</pre>
+      <span class="sub">Когда установка закончится, <b>закройте PowerShell и откройте его заново</b>: только новые окна
+      видят установленные программы. Наберите <code>claude</code> и нажмите Enter: откроется браузер,
+      войдите в аккаунт с подпиской Claude. После входа окно Claude можно закрыть сочетанием Ctrl+C.</span></li>
+    <li><b>Скачать проект.</b> В новом окне PowerShell:
+      <pre>git clone https://github.com/denfry/narezchik.git D:\narezchik</pre>
+      <span class="sub">Проект окажется в <code>D:\narezchik</code>. Если диска D нет, напишите <code>C:\narezchik</code>.
+      Путь лучше латиницей и без пробелов. Без Git: на github.com/denfry/narezchik нажмите
+      <b>Code → Download ZIP</b> и распакуйте архив в ту же папку.</span></li>
+    <li><b>Запустить установщик.</b> Откройте папку <code>narezchik</code> в Проводнике и дважды кликните
+      <code>install.cmd</code>. Он покажет, что уже установлено, и спросит, что делать. Нажмите <b>1</b>, потом Enter.
+      <span class="sub">Установщик сам поставит ffmpeg (монтаж), распознавание речи, поиск лица, а если у вас NVIDIA —
+      ещё и ускорение на видеокарте (около 1,3 ГБ). Это займёт 10–30 минут, в зависимости от интернета.
+      В конце будет таблица с галочками.</span></li>
+    <li><b>Перезагрузить компьютер.</b> Так все программы точно увидят друг друга.</li>
+    <li><b>Проверить установку.</b> Откройте папку проекта, кликните в адресную строку Проводника сверху,
+      сотрите путь, напишите <code>powershell</code> и нажмите Enter: терминал откроется сразу в этой папке. Вставьте:
+      <pre>python install.py --check</pre>
+      <span class="sub">Напротив обязательных пунктов должны стоять галочки. NVIDIA и пункты «по желанию» могут быть пустыми.</span></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>Первый запуск и канал</h2></div>
+  <ol class="steps">
+    <li><b>Открыть Claude в папке проекта.</b> Так же через адресную строку Проводника откройте терминал в папке
+      <code>narezchik</code> и наберите <code>claude</code>. Первый раз он спросит, доверяете ли вы этой папке, —
+      выберите <b>Yes</b>.</li>
+    <li><b>Подключить канал</b>, чтобы ролики монтировались под ваш стиль:
+      <pre>/setup-channel @ваш_канал</pre>
+      <span class="sub">Claude попросит бесплатный ключ YouTube API и сам расскажет, где его взять (это 3–5 минут в Google Cloud),
+      потом задаст несколько вопросов о канале. Если канала ещё нет или хотите пропустить этот шаг сегодня, так и напишите:
+      <span class="say">«канала пока нет, собери профиль по моим ответам»</span>.</span></li>
+  </ol>
+  <div class="callout">
+    <p><b>Claude спрашивает разрешение на команду.</b> Это нормально: он запускает скрипты проекта и спрашивает,
+    прежде чем что-то выполнить. Прочитайте, что за команда, и нажмите <b>Yes</b>. Если не понимаете, что она делает,
+    спросите прямо в чате: <span class="say">«что делает эта команда?»</span>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">04</span><h2>Конвейер одного лонга</h2></div>
+  <ol class="steps">
+    <li><b>Положить видео в папку <code>input</code></b> внутри проекта. Назовите файл латиницей, без пробелов:
+      <code>podcast.mp4</code>. Подойдёт любое качество, но лучше то, в котором подкаст снимали.</li>
+    <li><b>В окне Claude написать команду:</b>
+      <pre>/long input/podcast.mp4</pre></li>
+  </ol>
+  <p>По умолчанию работает экономный режим: нейросеть решает только, какие куски подкаста взять
+  и в каком порядке, а монтаж делает программа. Красным отмечены места, где Claude ждёт вашего ответа.</p>
+  <ol class="flow">
+    <li><span class="who">Техник</span><span class="what">Проверяет файл и расшифровывает речь с точным временем каждого слова. Часовой подкаст на NVIDIA — минуты, без видеокарты — около часа.</span><span class="tag">ждать</span></li>
+    <li><span class="who">Скаут</span><span class="what">Читает расшифровку и предлагает 2–3 варианта ролика: хук, главы, длительность. <b>Вы выбираете вариант.</b></span><span class="tag you">вы</span></li>
+    <li><span class="who">Автомонтаж</span><span class="what">Программа, не нейросеть: вырезает паузы и «эээ», ставит субтитры, наезды на склейках, карточки глав, музыку на стыках и цветокор — у каждого ролика свой. <b>Вам показывают главы с таймкодами до рендера — проверьте.</b></span><span class="tag you">вы</span></li>
+    <li><span class="who">Техник</span><span class="what">Рендерит в фоне и проверяет файл: разрешение, звук, битрейт. 4K-лонг считается час и больше.</span><span class="tag">ждать</span></li>
+    <li><span class="who">Вы</span><span class="what"><b>Смотрите готовый ролик</b> и, если надо, пишете правки словами.</span><span class="tag you">вы</span></li>
+  </ol>
+  <p class="note">Нужна ручная редактура: вырезка воды внутри глав, байт в середине, оценка критика? Напишите
+  <code>/long input/podcast.mp4 full</code>. Будет дольше и примерно в 3–5 раз дороже по лимиту.</p>
+
+  <div style="break-inside: avoid">
+  <h3>Как отвечать на остановках</h3>
+  <p>Обычными словами. Чем конкретнее, тем быстрее и дешевле правка:</p>
+  <table class="wrap">
+    <tr><th>Остановка</th><th>Примеры ответа</th></tr>
+    <tr><td>Выбор варианта</td><td><span class="say">«Беру второй»</span> · <span class="say">«Первый, но без главы про детство»</span></td></tr>
+    <tr><td>Главы до рендера</td><td><span class="say">«Глава 3 длинная, сожми до двух минут»</span> · <span class="say">«Начни с фразы про увольнение»</span> · <span class="say">«Ок, рендери»</span></td></tr>
+    <tr><td>Готовый ролик</td><td><span class="say">/fix podcast_long01 середина скучная</span> · <span class="say">/fix podcast_long01 музыка громкая</span></td></tr>
+  </table>
+  </div>
+  <p class="note">Готовый файл лежит в папке <code>output</code>, например <code>output/podcast_long01.mp4</code>.
+  Сначала посмотрите ролик целиком, потом пишите правки. Главы проверяйте <b>до</b> рендера: правка после него — это ещё час рендера.</p>
+
+  <div class="callout">
+    <p><b>Если памяти 16 ГБ:</b> на время рендера закройте браузер и игры. Ошибка <code>Cannot allocate memory</code>
+    значит, что памяти не хватило: напишите <span class="say">«рендери в 1440p»</span> — YouTube и так покажет
+    ролик в хорошем качестве, а памяти понадобится вдвое меньше.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">05</span><h2>Заливка на YouTube</h2></div>
+  <ol class="steps">
+    <li><b>Упаковать ролик.</b> В окне Claude, где дата — с какого дня строить расписание публикаций:
+      <pre>/pack podcast_long01 2026-10-20</pre>
+      <span class="sub">Появится файл <code>edit-plans/podcast_long01_ПУБЛИКАЦИЯ.md</code>: заголовок, описание с главами-таймкодами,
+      теги, закреплённый комментарий, текст для обложки и готовый запрос для генерации обложки нейросетью.</span></li>
+    <li><b>Сделать обложку</b> по тексту и запросу из этого файла — в любой нейросети для картинок или в редакторе.</li>
+    <li><b>Загрузить в YouTube Studio:</b> studio.youtube.com → <b>Создать → Загрузить видео</b> → выбрать файл
+      из <code>output</code> → вставить заголовок, описание и теги из файла публикации → загрузить обложку →
+      выбрать «Опубликовать» или «Запланировать».</li>
+  </ol>
+  <div class="callout">
+    <p><b>Автозагрузка по расписанию</b> тоже есть, но её настройка требует отдельного доступа в Google Cloud, а ролики
+    из непроверенного проекта YouTube оставляет приватными, пока проект не пройдёт аудит. Для начала загружайте вручную,
+    как выше. Если понадобится — инструкция в <code>docs/publish.md</code>, а Claude ничего не загружает
+    без вашей явной просьбы и подтверждения.</p>
+  </div>
+
+  <h3>Сколько это съедает</h3>
+  <p>В экономном режиме нейросеть работает дважды: скаут выбирает главы, упаковщик пишет заголовок и описание.
+  Ориентир в ценах API — около $1,5 за лонг из двухчасового подкаста, в полном режиме — $5–10. Это прикидка,
+  отдельно не замерялось. На подписке вы платите фиксированную сумму, а лонг расходует часть лимита. Сколько именно, смотрите командой <code>/usage</code> после первого
+  ролика. Между роликами пишите <code>/clear</code>: старая переписка расходует лимит в каждом сообщении.
+  Если лимит закончился посреди работы, ничего не потеряется: после сброса напишите
+  <span class="say">/long podcast</span>, и работа продолжится с того же шага.</p>
+</section>
+
+<section class="page-break">
+  <div class="sec-head"><span class="n">06</span><h2>Если что-то пошло не так</h2></div>
+  <table class="wrap">
+    <tr><th>Что видите</th><th>Что делать</th></tr>
+    <tr><td><code>python</code> не является командой… / «Python не найден»</td><td>Закройте и откройте терминал заново. Не помогло — переустановите Python 3.12 с галочкой «Add python.exe to PATH» и перезагрузите компьютер.</td></tr>
+    <tr><td><code>claude</code> не является командой…</td><td>Откройте новое окно PowerShell. Не помогло — повторите шаг 3 раздела 02.</td></tr>
+    <tr><td><code>ffmpeg</code> не найден</td><td>Перезагрузите компьютер. Не помогло — запустите <code>install.cmd</code> ещё раз.</td></tr>
+    <tr><td>Расшифровка идёт очень долго, хотя есть NVIDIA</td><td>Обновите драйвер видеокарты и запустите <code>install.cmd</code> снова: он доставит ускорение. Или просто напишите Claude, в чём проблема.</td></tr>
+    <tr><td><code>Cannot allocate memory</code> при рендере</td><td>Закройте браузер и игры, напишите <span class="say">«рендери в 1440p»</span>.</td></tr>
+    <tr><td>Непонятная ошибка</td><td>Скопируйте её текст в окно Claude и спросите, что делать. Он видит проект и обычно чинит сам.</td></tr>
+  </table>
+  <p class="src">Команды установки — по официальной документации Claude Code (code.claude.com/docs/en/setup) и установщику проекта,
+  октябрь 2026. Подробности для продвинутых — <code>docs/setup.md</code>, <code>docs/render.md</code>, <code>docs/publish.md</code>.</p>
+</section>
+
+</body>
+</html>

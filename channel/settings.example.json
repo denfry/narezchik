@@ -1,6 +1,7 @@
 {
-  "_comment": "Настройки воркфлоу. Копия в channel/settings.json (создаёт install.py, заполняет /setup-channel). budget: eco — подписка Claude Pro ($20): один агент на стадию, без b-roll, 1 круг критики; standard — Max-подписка; max — агент на каждый ролик параллельно.",
+  "_comment": "Настройки воркфлоу. Копия в channel/settings.json (создаёт install.py, заполняет /setup-channel). budget: eco — подписка Claude Pro ($20): один агент на стадию, без b-roll, 1 круг критики; standard — Max-подписка; max — агент на каждый ролик параллельно. long_pipeline: lean — лонг монтирует скрипт auto_long.py по главам скаута (дёшево); full — сценарист, монтажёр лонгов и критик на модели.",
   "budget": "eco",
+  "long_pipeline": "lean",
   "language": "ru",
   "shorts_per_source": 5,
   "qc_iterations": 1,

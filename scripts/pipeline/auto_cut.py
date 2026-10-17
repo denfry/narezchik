@@ -9,6 +9,10 @@ clip.source_start_sec..source_end_sec, вырезает паузы длинне�
 поправить роли. Слова-паразиты вроде «ну», «короче», «типа» скрипт НЕ режет: иногда
 это манера спикера — решает сценарист.
 
+Лонг из нескольких кусков исходника: если в плане есть clip.chapters (диапазоны глав от
+скаута), режется каждая глава по порядку, а сегменты помечаются номером главы
+(`speech_edits[].chapter`) — по нему auto_long.py ставит карточки и швы.
+
 Usage:
     python auto_cut.py edit-plans/podcast_short03.json                 # записать в план
     python auto_cut.py edit-plans/podcast_short03.json --dry-run       # только показать
@@ -76,6 +80,35 @@ def cut(words, max_pause, fps, min_seg=0.35):
     return out
 
 
+def cut_chapters(transcript, chapters, max_pause, fps):
+    """Главы лонга → speech_edits по порядку глав, с номером главы в каждом сегменте.
+
+    Глава с role "hook" (холодное начало) даёт сегменты hook, первый сегмент остальных
+    глав — chapter, последний сегмент ролика — payoff. Пустая глава (нет слов в
+    диапазоне) — ошибка скаута, её не пропускаем молча.
+    """
+    edits = []
+    for ci, ch in enumerate(chapters):
+        words = words_between(transcript, ch["source_start_sec"], ch["source_end_sec"])
+        if not words:
+            raise ValueError(f"глава {ci} «{ch.get('title', '')}» "
+                             f"[{ch['source_start_sec']}–{ch['source_end_sec']}]: нет слов")
+        for j, (s, e, ws) in enumerate(cut(words, max_pause, fps)):
+            if ch.get("role") == "hook":
+                role = "hook"
+            else:
+                role = "chapter" if j == 0 else "development"
+            edits.append({
+                "id": f"seg{len(edits) + 1:03d}", "source_start_sec": round(s, 3),
+                "source_end_sec": round(e, 3), "role": role, "chapter": ci,
+                "transcript_text": " ".join(w["word"].strip() for w in ws),
+                "cut_reason": "auto_cut: границы по паузам > %.2f с" % max_pause,
+            })
+    if edits and edits[-1]["role"] == "development":
+        edits[-1]["role"] = "payoff"
+    return edits
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("plan")
@@ -90,26 +123,34 @@ def main():
         plan = json.load(f)
     clip = plan.get("clip") or {}
     start, end = clip.get("source_start_sec"), clip.get("source_end_sec")
-    if start is None or end is None:
+    chapters = clip.get("chapters")
+    if not chapters and (start is None or end is None):
         sys.exit("в плане нет clip.source_start_sec/source_end_sec — сначала выбор момента")
     tpath = a.transcript or transcript_for_plan(plan)
     with io.open(resolve_repo_path(tpath), encoding="utf-8") as f:
         transcript = json.load(f)
     fps = float(plan.get("source", {}).get("fps") or plan.get("render_settings", {}).get("fps") or 30)
 
-    words = words_between(transcript, start, end)
-    if not words:
-        sys.exit(f"в диапазоне {start}–{end} нет слов — проверьте транскрипт")
-    segs = cut(words, a.max_pause, fps)
-    edits = []
-    for i, (s, e, ws) in enumerate(segs, 1):
-        role = "hook" if i == 1 else ("payoff" if i == len(segs) else "development")
-        edits.append({
-            "id": f"seg{i:02d}", "source_start_sec": round(s, 3), "source_end_sec": round(e, 3),
-            "role": role, "transcript_text": " ".join(w["word"].strip() for w in ws),
-            "cut_reason": "auto_cut: границы по паузам > %.2f с" % a.max_pause,
-        })
-    before = end - start
+    if chapters:
+        try:
+            edits = cut_chapters(transcript, chapters, a.max_pause, fps)
+        except ValueError as e:
+            sys.exit(str(e))
+        before = sum(ch["source_end_sec"] - ch["source_start_sec"] for ch in chapters)
+    else:
+        words = words_between(transcript, start, end)
+        if not words:
+            sys.exit(f"в диапазоне {start}–{end} нет слов — проверьте транскрипт")
+        segs = cut(words, a.max_pause, fps)
+        edits = []
+        for i, (s, e, ws) in enumerate(segs, 1):
+            role = "hook" if i == 1 else ("payoff" if i == len(segs) else "development")
+            edits.append({
+                "id": f"seg{i:02d}", "source_start_sec": round(s, 3), "source_end_sec": round(e, 3),
+                "role": role, "transcript_text": " ".join(w["word"].strip() for w in ws),
+                "cut_reason": "auto_cut: границы по паузам > %.2f с" % a.max_pause,
+            })
+        before = end - start
     after = sum(e["source_end_sec"] - e["source_start_sec"] for e in edits)
     log(f"{len(edits)} сегментов, {before:.1f} с → {after:.1f} с (−{before - after:.1f} с пауз и междометий)",
         tag="auto_cut")

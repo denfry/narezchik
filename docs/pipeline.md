@@ -58,6 +58,10 @@ python scripts/pipeline/proofread_transcript.py apply transcripts/podcast.json t
 # Черновой EDL: нарезка clip-диапазона по паузам и междометиям
 python scripts/pipeline/auto_cut.py edit-plans/podcast_short03.json [--max-pause 0.6] [--dry-run]
 
+# Лонг целиком без модели: главы скаута (clip.chapters) → speech_edits, крупность, карточки
+# глав, фразовые субтитры, музыка на швах, LUT/зерно не как в прошлых лонгах → audio_planned
+python scripts/pipeline/auto_long.py edit-plans/podcast_long01.json [--recut] [--height 1440] [--dry-run]
+
 # Кроп 9:16 по активному говорящему + линия глаз → reframe-события в план
 python scripts/pipeline/autoframe.py --plan edit-plans/podcast_short03.json
 
